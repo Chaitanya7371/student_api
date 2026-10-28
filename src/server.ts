@@ -1,6 +1,14 @@
-import app from './app';
-import { env } from './config/env';
+import app from './app.js';
+import { initDb } from './config/db.js';
+import { env } from './config/env.js';
 
-app.listen(env.PORT, () => {
-  console.log(`Server running on http://localhost:${env.PORT}`);
-});
+initDb()
+  .then(() => {
+    app.listen(env.PORT, () => {
+      console.log(`Server running on http://localhost:${env.PORT}`);
+    });
+  })
+  .catch((error: unknown) => {
+    console.error('Failed to connect to PostgreSQL:', error);
+    process.exit(1);
+  });

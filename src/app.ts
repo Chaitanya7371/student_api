@@ -1,18 +1,17 @@
 import express from 'express';
-import { errorHandler } from './middlewares/errorHandler';
-import { notFoundHandler } from './middlewares/notFound';
-import { requestLogger } from './middlewares/requestLogger';
-import routes from './routes';
+import { corsMiddleware } from './middlewares/cors.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFound.js';
+import { rejectDangerousPayload } from './middlewares/rejectDangerousPayload.js';
+import { requestLogger } from './middlewares/requestLogger.js';
+import routes from './routes/index.js';
 
-/**
- * Request lifecycle (middleware runs in registration order):
- *   requestLogger -> express.json -> /api routes -> notFound -> errorHandler
- * Any thrown error / rejected promise / next(err) jumps straight to errorHandler.
- */
 const app = express();
 
 app.use(requestLogger);
-app.use(express.json());
+app.use(corsMiddleware);
+app.use(express.json({ limit: '100kb' }));
+app.use(rejectDangerousPayload);
 
 app.use('/api', routes);
 

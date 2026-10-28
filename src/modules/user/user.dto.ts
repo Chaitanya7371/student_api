@@ -1,6 +1,5 @@
 import { z } from 'zod';
-
-/* ---------- Request DTOs (validated at the edge) ---------- */
+import type { Role } from '../../config/permissions.js';
 
 export const createUserDto = z.object({
   name: z.string().trim().min(1).max(100),
@@ -18,11 +17,11 @@ export const userIdParamDto = z.object({
 });
 export type UserIdParamDto = z.infer<typeof userIdParamDto>;
 
-/* ---------- Response DTO (what clients see) ---------- */
-
 export interface UserResponseDto {
   id: number;
   name: string;
   email: string;
+  role: Role;
+  studentId: number | null;
   createdAt: string;
 }
